@@ -4,12 +4,15 @@ import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
 
+import java.util.Scanner;
+
 import static org.game.enums.Color.WHITE;
 import static org.game.enums.Color.nextPlayer;
 import static org.game.enums.Column.columFromValue;
 
 public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
         Game game = new Game();
         Color currentPlayer = WHITE;
@@ -18,8 +21,7 @@ public class Main {
             game.board.print();
 
             System.out.println(currentPlayer + " make a move ...");
-
-            String input = System.console().readLine();
+            String input = scanner.nextLine();
 
             Column fromColumn = columFromValue(String.valueOf(input.charAt(0)));
             Row fromRow = Row.rowFromValue(Character.getNumericValue(input.charAt(1)));

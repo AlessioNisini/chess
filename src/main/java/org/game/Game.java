@@ -4,10 +4,12 @@ import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.game.enums.Color.*;
 import static org.game.enums.Column.areAdjacent;
+import static org.game.enums.Column.columnsInTheMiddle;
 import static org.game.enums.Row.*;
 
 public class Game {
@@ -60,12 +62,20 @@ public class Game {
     private String isPawnLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
         if (color == WHITE){
             if(fromColumn == toColumn){
-                if(fromRow == TWO)
-                    return toRow == THREE || toRow == FOUR ? "" : "Invalid Pawn move";
-                else if(fromRow.v > TWO.v && fromRow.v < EIGHT.v)
-                    return toRow.v == fromRow.v + 1 ? "" : "Invalid Pawn move";
-                else
+                if(fromRow == TWO) {
+                    boolean condValidMove = toRow == THREE || toRow == FOUR;
+                    boolean condNoCollision = !isThereACollision(fromColumn, fromRow, toColumn, toRow);
+                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
+                    return condValidMove && condNoCollision && condEmptyDestination ? "" : "Invalid Pawn move";
+                }
+                else if(fromRow.v > TWO.v && fromRow.v < EIGHT.v) {
+                    boolean condValidMove = toRow.v == fromRow.v + 1;
+                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
+                    return condValidMove && condEmptyDestination ? "" : "Invalid Pawn move";
+                }
+                else {
                     return "Invalid Pawn move";
+                }
             } else if (areAdjacent(fromColumn, toColumn)) {
                 return toRow.v == fromRow.v + 1 && board.isEating(BLACK, toColumn, toRow)? "" : "Invalid Pawn move";
             } else {
@@ -73,10 +83,17 @@ public class Game {
             }
         } else {
             if(fromColumn.equals(toColumn)){
-                if(fromRow == SEVEN)
-                    return toRow == SIX || toRow == FIVE ? "" : "Invalid Pawn move";
-                else if(fromRow.v < SEVEN.v && fromRow.v > ONE.v)
-                    return toRow.v == fromRow.v - 1 ? "" : "Invalid Pawn move";
+                if(fromRow == SEVEN) {
+                    boolean condValidMove = toRow == SIX || toRow == FIVE;
+                    boolean condNoCollision = !isThereACollision(fromColumn, fromRow, toColumn, toRow);
+                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
+                    return  condValidMove && condNoCollision && condEmptyDestination ? "" : "Invalid Pawn move";
+                }
+                else if(fromRow.v < SEVEN.v && fromRow.v > ONE.v) {
+                    boolean condValidMove = toRow.v == fromRow.v - 1;
+                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
+                    return condValidMove && condEmptyDestination ? "" : "Invalid Pawn move";
+                }
                 else
                     return "Invalid Pawn move";
             } else if (areAdjacent(fromColumn, toColumn)) {
@@ -105,6 +122,24 @@ public class Game {
 
     private String isRockLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
         return "";
+    }
+
+    private boolean isThereACollision(Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
+        if(fromColumn == toColumn) {
+            List<Row> rows = rowsInTheMiddle(fromRow, toRow);
+            for(Row row : rows) {
+                if(board.getPiece(fromColumn, row).isPresent())
+                    return true;
+            }
+        }
+        if(fromRow == toRow) {
+            List<Column> columns = columnsInTheMiddle(fromColumn, toColumn);
+            for(Column column : columns) {
+                if(board.getPiece(column, fromRow).isPresent())
+                    return true;
+            }
+        }
+        return false;
     }
 
 }
