@@ -7,12 +7,16 @@ import org.game.enums.Row;
 
 public class Queen extends Piece {
 
+    private final Rock rock = new Rock(color);
+    private final Bishop bishop = new Bishop(color);
+
     public Queen(Color color) {
         super(color, "Q");
     }
 
     @Override
     public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
+        return rock.isLegalMove(board, fromColumn, fromRow, toColumn, toRow).isEmpty() ||
+            bishop.isLegalMove(board, fromColumn, fromRow, toColumn, toRow).isEmpty() ? "" : "Invalid Queen move";
     }
 }

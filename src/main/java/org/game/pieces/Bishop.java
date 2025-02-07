@@ -5,8 +5,6 @@ import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
 
-import java.util.Optional;
-
 import static org.game.enums.Column.A;
 import static org.game.enums.Column.H;
 import static org.game.enums.Row.EIGHT;

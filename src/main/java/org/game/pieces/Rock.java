@@ -6,7 +6,6 @@ import org.game.enums.Column;
 import org.game.enums.Row;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.game.enums.Column.columnsInTheMiddle;
 import static org.game.enums.Row.rowsInTheMiddle;

@@ -7,12 +7,16 @@ import org.game.enums.Row;
 
 public class King extends Piece {
 
+    private final Queen queen = new Queen(color);
+
     public King(Color color) {
         super(color, "K");
     }
 
     @Override
     public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
+        boolean isQueenMove = queen.isLegalMove(board, fromColumn, fromRow, toColumn, toRow).isEmpty();
+        boolean isSingleStep = Math.abs(fromColumn.i - toColumn.i) <= 1 && Math.abs(fromRow.i - toRow.i) <= 1;
+        return  isQueenMove && isSingleStep ? "" : "Invalid King move";
     }
 }
