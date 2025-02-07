@@ -5,6 +5,8 @@ import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
 
+import java.util.Optional;
+
 import static org.game.enums.Color.*;
 
 public abstract class Piece {
@@ -18,6 +20,11 @@ public abstract class Piece {
     }
 
     public abstract String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow);
+
+    protected boolean isSameColorPieceOnACell(Board board, Column column, Row row) {
+        Optional<Piece> pieceOnDestination = board.getPiece(column, row);
+        return pieceOnDestination.isPresent() && pieceOnDestination.get().getColor() == color;
+    }
 
     public Color getColor() {
         return color;

@@ -1,7 +1,6 @@
 package org.game.pieces;
 
 import org.game.Board;
-import org.game.Cell;
 import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
@@ -11,7 +10,6 @@ import java.util.List;
 import static org.game.enums.Color.BLACK;
 import static org.game.enums.Color.WHITE;
 import static org.game.enums.Column.areAdjacent;
-import static org.game.enums.Column.columnsInTheMiddle;
 import static org.game.enums.Row.EIGHT;
 import static org.game.enums.Row.FIVE;
 import static org.game.enums.Row.FOUR;

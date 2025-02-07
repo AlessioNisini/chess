@@ -20,7 +20,7 @@ import static org.game.enums.Column.*;
 
 public class Board {
 
-    Cell[][] board = new Cell[8][8];
+    public Cell[][] board = new Cell[8][8];
 
     public Board() {
         for (int y=ONE.i; y<=EIGHT.i; y++) {
