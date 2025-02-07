@@ -46,4 +46,11 @@ public class Cell {
     public String toString() {
         return piece.isEmpty() ? " " : piece.get().toString();
     }
+
+    public Cell clone() {
+        if (piece.isPresent())
+            return new Cell(row, column, Optional.of(piece.get().clone()));
+        else
+            return new Cell(row, column, Optional.empty());
+    }
 }

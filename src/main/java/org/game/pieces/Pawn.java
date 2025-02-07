@@ -6,18 +6,11 @@ import org.game.enums.Column;
 import org.game.enums.Row;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.game.enums.Color.BLACK;
-import static org.game.enums.Color.WHITE;
+import static org.game.enums.Color.*;
 import static org.game.enums.Column.areAdjacent;
-import static org.game.enums.Row.EIGHT;
-import static org.game.enums.Row.FIVE;
-import static org.game.enums.Row.FOUR;
-import static org.game.enums.Row.ONE;
-import static org.game.enums.Row.SEVEN;
-import static org.game.enums.Row.SIX;
-import static org.game.enums.Row.THREE;
-import static org.game.enums.Row.TWO;
+import static org.game.enums.Row.*;
 import static org.game.enums.Row.rowsInTheMiddle;
 
 public class Pawn extends Piece {
@@ -35,7 +28,7 @@ public class Pawn extends Piece {
                 boolean noCollision = !isThereACollisionWhileMoving(board, fromColumn, fromRow, toRow);
                 return  isValidMove && noCollision ? "" : "Invalid Pawn move";
             } else if (areAdjacent(fromColumn, toColumn)) {
-                return toRow.v == fromRow.v + 1 && board.isEating(BLACK, toColumn, toRow)? "" : "Invalid Pawn move";
+                return toRow.v == fromRow.v + 1 && isEating(board, BLACK, toColumn, toRow) ? "" : "Invalid Pawn move";
             } else {
                 return "Invalid Pawn move";
             }
@@ -46,7 +39,7 @@ public class Pawn extends Piece {
                 boolean noCollision = !isThereACollisionWhileMoving(board, fromColumn, fromRow, toRow);
                 return  isValidMove && noCollision ? "" : "Invalid Pawn move";
             } else if (areAdjacent(fromColumn, toColumn)) {
-                return toRow.v == fromRow.v - 1 && board.isEating(WHITE, toColumn, toRow)? "" : "Invalid Pawn move";
+                return toRow.v == fromRow.v - 1 && isEating(board, WHITE, toColumn, toRow) ? "" : "Invalid Pawn move";
             } else {
                 return "Invalid Pawn move";
             }
@@ -60,5 +53,10 @@ public class Pawn extends Piece {
                 return true;
         }
         return board.getPiece(column, toRow).isPresent();
+    }
+
+    private boolean isEating(Board board, Color color, Column column, Row row) {
+        Optional<Piece> piece = board.getPiece(column, row);
+        return piece.isPresent() && piece.get().getColor() == color;
     }
 }

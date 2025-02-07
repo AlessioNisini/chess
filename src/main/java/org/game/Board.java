@@ -37,14 +37,33 @@ public class Board {
         return board[row.i][column.i].getPiece();
     }
 
-    public boolean isEating(Color color, Column column, Row row) {
-        Optional<Piece> piece = getPiece(column, row);
-        return piece.isPresent() && piece.get().getColor() == color;
-    }
-
     public void updateBoard(Column column, Row row, Optional<Piece> piece) {
         board[row.i][column.i].setPiece(piece);
     }
+
+    public boolean isPlayerUnderCheck(Color color) {
+        Cell kingCell = null;
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                if(board[y][x].getPiece().isPresent()
+                    && board[y][x].getPiece().get() instanceof King
+                    && board[y][x].getPiece().get().getColor() == color
+                ) kingCell = board[y][x];
+            }
+        }
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                if(board[y][x].getPiece().isPresent() && board[y][x].getPiece().get().getColor() != color) {
+                    Cell cell = board[y][x];
+                    Piece piece = board[y][x].getPiece().get();
+                    if(piece.isLegalMove(this, cell.getColumn(), cell.getRow(), kingCell.getColumn(), kingCell.getRow()).isEmpty())
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public void print() {
         System.out.println();
@@ -58,7 +77,22 @@ public class Board {
         }
     }
 
-    static Optional<Piece> initialPieceFromCoordinate(Row row, Column column) {
+//    private Optional<Piece> xx(Row row, Column column) {
+//        if (row == ONE && column == B) {
+//            return Optional.of(new King(WHITE));
+//        } else if (row == TWO && column == C){
+//            return Optional.of(new Pawn(WHITE));
+//        } else if (row == FOUR && column == E){
+//            return Optional.of(new Queen(BLACK));
+//        } else if (row == EIGHT && column == A){
+//            return Optional.of(new King(BLACK));
+//        } else {
+//            return Optional.empty();
+//        }
+//    }
+
+
+    private Optional<Piece> initialPieceFromCoordinate(Row row, Column column) {
         if (row == ONE || row == EIGHT) {
             Color color = row == ONE ? WHITE : BLACK;
             return switch (column){
@@ -74,5 +108,15 @@ public class Board {
         } else {
             return Optional.empty();
         }
+    }
+
+    public Board clone() {
+        Board clonedBoard = new Board();
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                clonedBoard.board[y][x] = board[y][x].clone();
+            }
+        }
+        return clonedBoard;
     }
 }

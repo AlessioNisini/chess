@@ -15,8 +15,8 @@ public class Game {
 
     Board board;
 
-    public Game() {
-        this.board = new Board();
+    public Game(Board board) {
+        this.board = board;
     }
 
     public String move(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {

@@ -14,11 +14,13 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        Game game = new Game();
+        Game game = new Game(new Board());
         Color currentPlayer = WHITE;
 
         while (true) {
             game.board.print();
+
+            Board state = game.board.clone();
 
             System.out.println(currentPlayer + " make a move ...");
             String input = scanner.nextLine();
@@ -30,10 +32,17 @@ public class Main {
 
             String error = game.move(currentPlayer, fromColumn, fromRow, toColumn, toRow);
 
-            if (!error.isEmpty())
+            if (!error.isEmpty()) {
                 System.out.println("Error: " + error + " Try again");
-            else
+            }
+            else if (game.board.isPlayerUnderCheck(currentPlayer)) {
+                game.board = state;
+                System.out.println("Error you are under check, Try again");
+            }
+            else {
                 currentPlayer = nextPlayer(currentPlayer);
+            }
+
         }
 
     }

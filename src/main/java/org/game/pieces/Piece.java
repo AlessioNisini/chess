@@ -38,4 +38,14 @@ public abstract class Piece {
     public String toString() {
         return color == WHITE ? name : name.toLowerCase();
     }
+
+    public Piece clone() {
+        if(this instanceof Pawn) return new Pawn(color);
+        if(this instanceof Rock) return new Rock(color);
+        if(this instanceof Knight) return new Knight(color);
+        if(this instanceof Bishop) return new Bishop(color);
+        if(this instanceof Queen) return new Queen(color);
+        if(this instanceof King) return new King(color);
+        return null;
+    }
 }
