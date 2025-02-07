@@ -2,6 +2,7 @@ package org.game;
 
 import org.game.enums.Column;
 import org.game.enums.Row;
+import org.game.pieces.Piece;
 
 import java.util.Optional;
 

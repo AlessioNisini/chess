@@ -3,6 +3,7 @@ package org.game;
 import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
+import org.game.pieces.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class Game {
             if (piece.getColor() != color)
                 throw new RuntimeException("wrong piece color");
 
-            String error = isLegalMove(piece, fromColumn, fromRow, toColumn, toRow);
+            String error = piece.isLegalMove(board, fromColumn, fromRow, toColumn, toRow);
             if (!error.isEmpty())
                 throw new RuntimeException(error);
 
@@ -49,82 +50,6 @@ public class Game {
     private void makeTheMove(Piece piece, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
         board.updateBoard(fromColumn, fromRow, Optional.empty());
         board.updateBoard(toColumn, toRow, Optional.of(piece));
-    }
-
-    private String isLegalMove(Piece piece, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return switch (piece.getName()){
-            case PAWN -> isPawnLegalMove(piece.getColor(), fromColumn, fromRow, toColumn, toRow);
-            case ROCK -> isRockLegalMove(piece.getColor(), fromColumn, fromRow, toColumn, toRow);
-            case KNIGHT -> isKnightLegalMove(piece.getColor(), fromColumn, fromRow, toColumn, toRow);
-            case BISHOP -> isBishopLegalMove(piece.getColor(), fromColumn, fromRow, toColumn, toRow);
-            case QUEEN -> isQueenLegalMove(piece.getColor(), fromColumn, fromRow, toColumn, toRow);
-            case KING -> isKingLegalMove(piece.getColor(), fromColumn, fromRow, toColumn, toRow);
-        };
-    }
-
-    private String isPawnLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        if (color == WHITE){
-            if(fromColumn == toColumn){
-                if(fromRow == TWO) {
-                    boolean condValidMove = toRow == THREE || toRow == FOUR;
-                    boolean condNoCollision = !isThereACollision(fromColumn, fromRow, toColumn, toRow);
-                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
-                    return condValidMove && condNoCollision && condEmptyDestination ? "" : "Invalid Pawn move";
-                }
-                else if(fromRow.v > TWO.v && fromRow.v < EIGHT.v) {
-                    boolean condValidMove = toRow.v == fromRow.v + 1;
-                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
-                    return condValidMove && condEmptyDestination ? "" : "Invalid Pawn move";
-                }
-                else {
-                    return "Invalid Pawn move";
-                }
-            } else if (areAdjacent(fromColumn, toColumn)) {
-                return toRow.v == fromRow.v + 1 && board.isEating(BLACK, toColumn, toRow)? "" : "Invalid Pawn move";
-            } else {
-                return "Invalid Pawn move";
-            }
-        } else {
-            if(fromColumn.equals(toColumn)){
-                if(fromRow == SEVEN) {
-                    boolean condValidMove = toRow == SIX || toRow == FIVE;
-                    boolean condNoCollision = !isThereACollision(fromColumn, fromRow, toColumn, toRow);
-                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
-                    return  condValidMove && condNoCollision && condEmptyDestination ? "" : "Invalid Pawn move";
-                }
-                else if(fromRow.v < SEVEN.v && fromRow.v > ONE.v) {
-                    boolean condValidMove = toRow.v == fromRow.v - 1;
-                    boolean condEmptyDestination = board.getPiece(fromColumn, toRow).isEmpty();
-                    return condValidMove && condEmptyDestination ? "" : "Invalid Pawn move";
-                }
-                else
-                    return "Invalid Pawn move";
-            } else if (areAdjacent(fromColumn, toColumn)) {
-                return toRow.v == fromRow.v - 1 && board.isEating(WHITE, toColumn, toRow)? "" : "Invalid Pawn move";
-            } else {
-                return "Invalid Pawn move";
-            }
-        }
-    }
-
-    private String isKingLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
-    }
-
-    private String isQueenLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
-    }
-
-    private String isBishopLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
-    }
-
-    private String isKnightLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
-    }
-
-    private String isRockLegalMove(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        return "";
     }
 
     private boolean isThereACollision(Column fromColumn, Row fromRow, Column toColumn, Row toRow) {

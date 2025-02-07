@@ -3,11 +3,17 @@ package org.game;
 import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
+import org.game.pieces.Bishop;
+import org.game.pieces.King;
+import org.game.pieces.Knight;
+import org.game.pieces.Pawn;
+import org.game.pieces.Piece;
+import org.game.pieces.Queen;
+import org.game.pieces.Rock;
 
 import java.util.Optional;
 
 import static org.game.enums.Color.*;
-import static org.game.enums.PieceName.*;
 import static org.game.enums.Row.*;
 import static org.game.enums.Column.*;
 
@@ -56,15 +62,15 @@ public class Board {
         if (row == ONE || row == EIGHT) {
             Color color = row == ONE ? WHITE : BLACK;
             return switch (column){
-                case A, H -> Optional.of(new Piece(color, ROCK));
-                case B, G -> Optional.of(new Piece(color, KNIGHT));
-                case C, F -> Optional.of(new Piece(color, BISHOP));
-                case D -> Optional.of(new Piece(color, QUEEN));
-                case E -> Optional.of(new Piece(color, KING));
+                case A, H -> Optional.of(new Rock(color));
+                case B, G -> Optional.of(new Knight(color));
+                case C, F -> Optional.of(new Bishop(color));
+                case D -> Optional.of(new Queen(color));
+                case E -> Optional.of(new King(color));
             };
         } else if (row == TWO || row == SEVEN){
             Color color = row == TWO ? WHITE : BLACK;
-            return Optional.of(new Piece(color, PAWN));
+            return Optional.of(new Pawn(color));
         } else {
             return Optional.empty();
         }
