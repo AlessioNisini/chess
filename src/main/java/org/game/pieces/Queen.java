@@ -7,11 +7,16 @@ import org.game.enums.Row;
 
 public class Queen extends Piece {
 
-    private final Rock rock = new Rock(color);
+    private final Rock rock = new Rock(color, Column.A);
     private final Bishop bishop = new Bishop(color);
 
     public Queen(Color color) {
         super(color, "Q");
+    }
+
+    @Override
+    public Queen clone() {
+        return new Queen(color);
     }
 
     @Override

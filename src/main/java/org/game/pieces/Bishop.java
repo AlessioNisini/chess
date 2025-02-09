@@ -17,6 +17,11 @@ public class Bishop extends Piece {
     }
 
     @Override
+    public Bishop clone() {
+        return new Bishop(color);
+    }
+
+    @Override
     public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
         if(fromColumn.i - fromRow.i == toColumn.i - toRow.i) {
             for (int y=ONE.i; y<=EIGHT.i; y++) {

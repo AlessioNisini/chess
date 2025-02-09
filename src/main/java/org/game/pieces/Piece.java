@@ -19,6 +19,8 @@ public abstract class Piece {
         this.name = name;
     }
 
+    public abstract Piece clone();
+
     public abstract String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow);
 
     protected boolean isSameColorPieceOnACell(Board board, Column column, Row row) {
@@ -30,22 +32,9 @@ public abstract class Piece {
         return color;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
         return color == WHITE ? name : name.toLowerCase();
     }
 
-    public Piece clone() {
-        if(this instanceof Pawn) return new Pawn(color);
-        if(this instanceof Rock) return new Rock(color);
-        if(this instanceof Knight) return new Knight(color);
-        if(this instanceof Bishop) return new Bishop(color);
-        if(this instanceof Queen) return new Queen(color);
-        if(this instanceof King) return new King(color);
-        return null;
-    }
 }

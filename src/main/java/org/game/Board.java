@@ -42,15 +42,7 @@ public class Board {
     }
 
     public boolean isPlayerUnderCheck(Color color) {
-        Cell kingCell = null;
-        for (int y=ONE.i; y<=EIGHT.i; y++) {
-            for (int x=A.i; x<=H.i; x++) {
-                if(board[y][x].getPiece().isPresent()
-                    && board[y][x].getPiece().get() instanceof King
-                    && board[y][x].getPiece().get().getColor() == color
-                ) kingCell = board[y][x];
-            }
-        }
+        Cell kingCell = findTheKingCell(color);
         for (int y=ONE.i; y<=EIGHT.i; y++) {
             for (int x=A.i; x<=H.i; x++) {
                 if(board[y][x].getPiece().isPresent() && board[y][x].getPiece().get().getColor() != color) {
@@ -77,26 +69,28 @@ public class Board {
         }
     }
 
-//    private Optional<Piece> xx(Row row, Column column) {
-//        if (row == ONE && column == B) {
-//            return Optional.of(new King(WHITE));
-//        } else if (row == TWO && column == C){
-//            return Optional.of(new Pawn(WHITE));
-//        } else if (row == FOUR && column == E){
-//            return Optional.of(new Queen(BLACK));
-//        } else if (row == EIGHT && column == A){
-//            return Optional.of(new King(BLACK));
-//        } else {
-//            return Optional.empty();
-//        }
-//    }
+    public Cell findTheKingCell(Color color) {
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                if(board[y][x].getPiece().isPresent()
+                    && board[y][x].getPiece().get() instanceof King
+                    && board[y][x].getPiece().get().getColor() == color
+                ) return board[y][x];
+            }
+        }
+        return null;
+    }
 
+    public King findTheKing(Color color) {
+        Cell kingCell = findTheKingCell(color);
+        return (King) kingCell.getPiece().orElseThrow(() -> new IllegalStateException(""));
+    }
 
     private Optional<Piece> initialPieceFromCoordinate(Row row, Column column) {
         if (row == ONE || row == EIGHT) {
             Color color = row == ONE ? WHITE : BLACK;
             return switch (column){
-                case A, H -> Optional.of(new Rock(color));
+                case A, H -> Optional.of(new Rock(color, column));
                 case B, G -> Optional.of(new Knight(color));
                 case C, F -> Optional.of(new Bishop(color));
                 case D -> Optional.of(new Queen(color));

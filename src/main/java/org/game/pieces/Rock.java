@@ -12,8 +12,16 @@ import static org.game.enums.Row.rowsInTheMiddle;
 
 public class Rock extends Piece {
 
-    public Rock(Color color) {
+    private final Column type;
+
+    public Rock(Color color, Column column) {
         super(color, "R");
+        this.type = column;
+    }
+
+    @Override
+    public Rock clone() {
+        return new Rock(color, type);
     }
 
     @Override
@@ -35,6 +43,10 @@ public class Rock extends Piece {
             return isSameColorPieceOnACell(board, toColumn, toRow) ? "Invalid Rock move" : "";
         }
         return "Invalid Rock move";
+    }
+
+    public Column getType() {
+        return type;
     }
 
 }

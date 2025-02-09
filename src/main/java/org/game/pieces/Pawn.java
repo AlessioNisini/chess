@@ -20,6 +20,11 @@ public class Pawn extends Piece {
     }
 
     @Override
+    public Pawn clone() {
+        return new Pawn(color);
+    }
+
+    @Override
     public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
         if (color == WHITE){
             if(fromColumn == toColumn){

@@ -12,6 +12,11 @@ public class Knight extends Piece {
     }
 
     @Override
+    public Knight clone() {
+        return new Knight(color);
+    }
+
+    @Override
     public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
         boolean validKnightMove = Math.abs(fromColumn.i - toColumn.i) == 1 && Math.abs(fromRow.i - toRow.i) == 2 ||
             Math.abs(fromColumn.i - toColumn.i) == 2 && Math.abs(fromRow.i - toRow.i) == 1;
