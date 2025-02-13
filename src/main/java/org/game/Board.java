@@ -11,6 +11,8 @@ import org.game.pieces.Piece;
 import org.game.pieces.Queen;
 import org.game.pieces.Rock;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.game.enums.Color.*;
@@ -84,6 +86,20 @@ public class Board {
     public King findTheKing(Color color) {
         Cell kingCell = findTheKingCell(color);
         return (King) kingCell.getPiece().orElseThrow(() -> new IllegalStateException(""));
+    }
+
+    public List<PieceOut> buildResponse() {
+        List<PieceOut> pieces = new ArrayList<>();
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                if(board[y][x].getPiece().isPresent()) {
+                    Cell cell = board[y][x];
+                    Piece piece = board[y][x].getPiece().get();
+                    pieces.add(new PieceOut(piece.getColor().name().charAt(0) + piece.getName(), cell.getColumn().v + cell.getRow().v));
+                }
+            }
+        }
+        return pieces;
     }
 
     private Optional<Piece> initialPieceFromCoordinate(Row row, Column column) {

@@ -28,6 +28,10 @@ public abstract class Piece {
         return pieceOnDestination.isPresent() && pieceOnDestination.get().getColor() == color;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Color getColor() {
         return color;
     }

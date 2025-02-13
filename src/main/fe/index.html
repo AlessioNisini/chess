@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Scacchiera</title>
+  <style>
+    #scacchiera {
+      position: absolute;
+      /* Importante per il posizionamento del layer */
+      border: 1px solid black;
+    }
+
+    #pezzi-layer {
+      position: absolute;
+      /* Posizionamento assoluto sopra la scacchiera */
+      top: 0;
+      left: 0;
+      width: 640px;
+      height: 640px;
+      pointer-events: none;
+      /* Permette ai click di passare attraverso il layer */
+    }
+  </style>
+</head>
+
+<body>
+  <div style="display: grid; grid-template-columns: 640px auto;">
+    <div id="contenitore-scacchiera" style="position: relative; height: 640px;">
+      <canvas id="scacchiera" width="640" height="640"></canvas>
+      <div id="pezzi-layer" style="position: absolute; top: 0; left: 0; height: 640px; width: 640px;"></div>
+    </div>
+    <div style="display: flex; flex-direction: column; margin-left: 20px;">
+      <p id="da"></p>
+      <p id="a"></p>
+      <p id="mossa"></p>
+      <p id="stato"></p>
+    </div>
+  </div>
+  <script src="js/pezzi.js"></script>
+  <script src="js/chess.js"></script>
+</body>
+
+</html>

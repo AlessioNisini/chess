@@ -17,7 +17,7 @@ import static org.game.enums.Row.*;
 
 public class Game {
 
-    Board board;
+    public Board board;
 
     public Game(Board board) {
         this.board = board;
