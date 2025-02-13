@@ -8,34 +8,18 @@ const statoElement = document.getElementById('stato');
 const pezziSVG = {
   WP: WP_svg,
   BP: BP_svg,
-  /* 
-  WR: WR_svg,
+  WK: WK_svg,
+  BK: BK_svg,
+  WQ: WQ_svg,
+  BQ: BQ_svg,
+  WB: WB_svg,
+  BB: BB_svg,
   WN: WN_svg,
-  // ... (aggiungi tutti gli altri pezzi)
-  BP: BP_svg,
-  BR: BR_svg,
-  BN: BN_svg, */
-  // ...
+  BN: BN_svg,
+  WR: WR_svg,
+  BR: BR_svg
 };
 var statoPartita = 
-[
-  { "piece": "WP", "position": "a2" },
-  { "piece": "WP", "position": "b2" },
-  { "piece": "WP", "position": "c2" },
-  { "piece": "WP", "position": "d2" },
-  { "piece": "WP", "position": "e2" },
-  { "piece": "WP", "position": "f2" },
-  { "piece": "WP", "position": "g2" },
-  { "piece": "WP", "position": "h2" },
-  { "piece": "BP", "position": "a7" },
-  { "piece": "BP", "position": "b7" },
-  { "piece": "BP", "position": "c7" },
-  { "piece": "BP", "position": "d7" },
-  { "piece": "BP", "position": "e7" },
-  { "piece": "BP", "position": "f7" },
-  { "piece": "BP", "position": "g7" },
-  { "piece": "BP", "position": "h7" }
-];/* 
 [
   { "piece": "WR", "position": "a1" },
   { "piece": "WN", "position": "b1" },
@@ -57,6 +41,35 @@ var statoPartita =
   { "piece": "BR", "position": "a8" },
   { "piece": "BN", "position": "b8" },
   { "piece": "BB", "position": "c8" },
+  { "piece": "BQ", "position": "d8" },
+  { "piece": "BK", "position": "e8" },
+  { "piece": "BB", "position": "f8" },
+  { "piece": "BN", "position": "g8" },
+  { "piece": "BR", "position": "h8" },
+  { "piece": "BP", "position": "a7" },
+  { "piece": "BP", "position": "b7" },
+  { "piece": "BP", "position": "c7" },
+  { "piece": "BP", "position": "d7" },
+  { "piece": "BP", "position": "e7" },
+  { "piece": "BP", "position": "f7" },
+  { "piece": "BP", "position": "g7" },
+  { "piece": "BP", "position": "h7" }
+];/* 
+[
+  { "piece": "WQ", "position": "d1" },
+  { "piece": "WK", "position": "e1" },
+  { "piece": "WB", "position": "f1" },
+  { "piece": "WN", "position": "g1" },
+  { "piece": "WR", "position": "h1" },
+  { "piece": "WP", "position": "a2" },
+  { "piece": "WP", "position": "b2" },
+  { "piece": "WP", "position": "c2" },
+  { "piece": "WP", "position": "d2" },
+  { "piece": "WP", "position": "e2" },
+  { "piece": "WP", "position": "f2" },
+  { "piece": "WP", "position": "g2" },
+  { "piece": "WP", "position": "h2" },
+
   { "piece": "BQ", "position": "d8" },
   { "piece": "BK", "position": "e8" },
   { "piece": "BB", "position": "f8" },
@@ -117,7 +130,7 @@ canvas.addEventListener('click', (event) => {
     const pezzo = trovaPezzo(casella); // <--- Nuova funzione di ricerca pezzo
 
     if (pezzo) { // Se il pezzo esiste
-      daElement.textContent = 'da:' + casella;
+      daElement.textContent = casella;
       primaCasella = casella;
       pezzoSelezionato = pezzo; // <--- Memorizza il pezzo selezionato
       console.log("Prima casella (con pezzo):", primaCasella, pezzoSelezionato);
@@ -126,10 +139,10 @@ canvas.addEventListener('click', (event) => {
       console.log("Primo click non valido (nessun pezzo qui).");
     }
   } else {
-    aElement.textContent = 'a:' + casella;
+    aElement.textContent = casella;
     const mossa = primaCasella + casella;
     console.log("Mossa:", mossa);
-    mossaElement.textContent = "Mossa: " + mossa;
+    mossaElement.textContent = mossa;
     aggiornaStato(info, pezzoSelezionato); 
     //svuotaScacchiera();
     //disegnaPezzi();
@@ -137,7 +150,11 @@ canvas.addEventListener('click', (event) => {
     statoElement.innerHTML = jsonString;
     primaCasella = null;
     pezzoSelezionato = null; // <--- Resetta il pezzo selezionato
-    fetch('http://localhost:8080/api/chess?move=' + mossa)
+    svuotaScacchiera();
+    disegnaPezzi();
+    //const url = "/mossa?info=";
+    const url = "http://localhost:8080/api/chess?move=";
+    fetch(url + mossa)
         .then(response => response.json())
         .then(stato => {
           statoPartita = stato;
@@ -165,7 +182,19 @@ function svuotaScacchiera() {
 
 function disegnaPezzi() {
   statoPartita.forEach(pezzo => {
-    var size = pezzo.piece.substring(1) == "P" ? 0.75 : 0.9;
+    var size = 1;
+    switch (pezzo.piece.substring(1)) {
+      case 'P':
+        size = 0.75;
+        break;
+      case 'R':
+      case 'N':
+        size = 0.90;
+        break;
+      default:
+        size = 1;
+    }
+    //var size = pezzo.piece.substring(1) == "P" ? 0.75 : 0.9;
     const x = (pezzo.position.charCodeAt(0) - 'a'.charCodeAt(0)) * latoCasella + latoCasella * (1 - size) / 2;
     const y = (8 - pezzo.position.substring(1)) * latoCasella + latoCasella * (1 - size) / 2;
     const pezzoSVG = creaPezzoSVG(pezziSVG[pezzo.piece], latoCasella * size, latoCasella * size);
