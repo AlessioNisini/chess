@@ -53,6 +53,13 @@ public class Board {
         board[coordinate.getRow().i][coordinate.getColumn().i].setPiece(piece);
     }
 
+    public void resetEnPassantRight(Color color) {
+        getAllPawns(color).forEach(pawn -> {
+            pawn.setCanEnPassant(false);
+            pawn.setEnPassantColumn(null);
+        });
+    }
+
     public boolean isPlayerUnderCheck(Color playerColor) {
         Cell kingCell = findTheKingCell(playerColor);
         return isCellSeenByAnyEnemyPieces(nextPlayer(playerColor), new Coordinate(kingCell.getColumn(), kingCell.getRow()));
@@ -108,6 +115,19 @@ public class Board {
             }
         }
         return cells;
+    }
+
+    private List<Pawn> getAllPawns(Color color) {
+        List<Pawn> pawns = new ArrayList<>();
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                board[y][x].getPiece().ifPresent( piece -> {
+                    if(piece instanceof Pawn pawn && pawn.getColor() == color)
+                        pawns.add(pawn);
+                });
+            }
+        }
+        return pawns;
     }
 
     private Optional<Piece> initialPieceFromCoordinate(Row row, Column column) {

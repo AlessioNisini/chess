@@ -17,13 +17,35 @@ import static org.game.enums.Row.rowsInTheMiddle;
 
 public class Pawn extends Piece {
 
+    private boolean canEnPassant = false;
+    private Column enPassantColumn;
+
     public Pawn(Color color) {
         super(color, "P");
     }
 
     @Override
     public Pawn clone() {
+        Pawn pawn = new Pawn(color);
+        pawn.setCanEnPassant(canEnPassant);
+        pawn.setEnPassantColumn(enPassantColumn);
         return new Pawn(color);
+    }
+
+    public boolean getCanEnPassant() {
+        return canEnPassant;
+    }
+
+    public void setCanEnPassant(boolean canEnPassant) {
+        this.canEnPassant = canEnPassant;
+    }
+
+    public Column getEnPassantColumn() {
+        return enPassantColumn;
+    }
+
+    public void setEnPassantColumn(Column enPassantColumn) {
+        this.enPassantColumn = enPassantColumn;
     }
 
     @Override
@@ -48,7 +70,8 @@ public class Pawn extends Piece {
             boolean noCollision = !isThereACollisionWhileMoving(board, fromColumn, fromRow, toRow);
             return  isValidMove && noCollision ? "" : "Invalid Pawn move";
         } else if (areAdjacent(fromColumn, toColumn)) {
-            return isPawnOneStepMoving && isEating(board, nextPlayer(color), toColumn, toRow) ? "" : "Invalid Pawn move";
+            boolean isEnPassant = canEnPassant && toColumn == enPassantColumn;
+            return isPawnOneStepMoving && (isEating(board, nextPlayer(color), toColumn, toRow) || isEnPassant) ? "" : "Invalid Pawn move";
         } else {
             return "Invalid Pawn move";
         }

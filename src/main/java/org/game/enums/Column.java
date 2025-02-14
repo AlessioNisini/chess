@@ -37,6 +37,19 @@ public enum Column {
         throw new IllegalArgumentException("value not found in the Columns");
     }
 
+    public static List<Column> getAdjacent(Column column) {
+        return switch (column){
+            case A -> List.of(B);
+            case B -> List.of(A, C);
+            case C -> List.of(B, D);
+            case D -> List.of(C, E);
+            case E -> List.of(D, F);
+            case F -> List.of(E, G);
+            case G -> List.of(F, H);
+            case H -> List.of(G);
+        };
+    }
+
     public static boolean areAdjacent(Column c1, Column c2) {
         return switch (c1){
             case A -> c2 == B;

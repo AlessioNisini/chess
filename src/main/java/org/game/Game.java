@@ -47,7 +47,10 @@ public class Game {
 
     private void makeTheMove(Piece piece, Move move) {
         eventuallyUpdateCastleRight(piece);
+        eventuallyUpdateEnPassantRight(piece, move);
+
         board.updateBoard(move.getFrom(), Optional.empty());
+        eatPawnIfEnPassant(piece, move);
         if (piece instanceof Pawn && (move.toRow() == ONE || move.toRow() == EIGHT)) {
             board.updateBoard(move.getTo(), Optional.of(new Queen(piece.getColor())));
         } else {
@@ -68,6 +71,28 @@ public class Game {
             if (king.getCanCastleShort() && rock.getType() == H) {
                 king.setCanCastleShort(false);
             }
+        }
+    }
+
+    private void eventuallyUpdateEnPassantRight(Piece piece, Move move) {
+        Row fromRow = piece.getColor() == WHITE ? TWO : SEVEN;
+        Row toRow = piece.getColor() == WHITE ? FOUR : FIVE;
+
+        if (piece instanceof Pawn && move.fromRow() == fromRow && move.toRow() == toRow) {
+            getAdjacent(move.fromColumn()).forEach(column -> {
+                board.getPiece(new Coordinate(column, toRow)).ifPresent(p -> {
+                    if (p instanceof Pawn pawn && pawn.getColor() == nextPlayer(piece.getColor())) {
+                        pawn.setCanEnPassant(true);
+                        pawn.setEnPassantColumn(move.fromColumn());
+                    }
+                });
+            });
+        }
+    }
+
+    private void eatPawnIfEnPassant(Piece piece, Move move) {
+        if (piece instanceof Pawn && move.fromColumn() != move.toColumn() && board.getPiece(move.getTo()).isEmpty()) {
+            board.updateBoard(new Coordinate(move.toColumn(), move.fromRow()), Optional.empty());
         }
     }
 

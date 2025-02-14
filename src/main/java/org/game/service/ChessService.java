@@ -13,6 +13,7 @@ import java.util.List;
 import static org.game.enums.Color.WHITE;
 import static org.game.enums.Color.nextPlayer;
 import static org.game.enums.Column.columFromValue;
+import static org.game.enums.Column.getAdjacent;
 import static org.game.enums.Row.rowFromValue;
 
 @Service
@@ -42,8 +43,8 @@ public class ChessService {
         else if (game.board.isPlayerUnderCheck(currentPlayer)) {
             game.board = state;
             System.out.println("Error you are under check, Try again");
-        }
-        else {
+        } else {
+            game.board.resetEnPassantRight(currentPlayer);
             currentPlayer = nextPlayer(currentPlayer);
         }
 
