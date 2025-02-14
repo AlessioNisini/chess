@@ -39,18 +39,19 @@ public class King extends Piece {
 
         Row castleRow = color == WHITE ? ONE : EIGHT;
 
-        if (canCastleLong) {
+        //Player try to castle long
+        if (fromColumn == E && fromRow == castleRow && toColumn == C && toRow == castleRow) {
             boolean rockCond = board.getPiece(new Coordinate(A, castleRow)).isPresent() && board.getPiece(new Coordinate(A, castleRow)).get() instanceof Rock rock && rock.getType() == A;
-            boolean moveCond = fromColumn == E && fromRow == castleRow && toColumn == C && toRow == castleRow;
             boolean emptyCellCond = board.getPiece(new Coordinate(B, castleRow)).isEmpty() && board.getPiece(new Coordinate(C, castleRow)).isEmpty() && board.getPiece(new Coordinate(D, castleRow)).isEmpty();
-            if(rockCond && moveCond && emptyCellCond)
+            if(canCastleLong && rockCond && emptyCellCond)
                 return "";
         }
-        if (canCastleShort) {
+
+        //Player try to castle short
+        if (fromColumn == E && fromRow == castleRow && toColumn == G && toRow == castleRow) {
             boolean rockCond = board.getPiece(new Coordinate(H, castleRow)).isPresent() && board.getPiece(new Coordinate(H, castleRow)).get() instanceof Rock rock && rock.getType() == H;
-            boolean moveCond = fromColumn == E && fromRow == castleRow && toColumn == G && toRow == castleRow;
             boolean emptyCellCond = board.getPiece(new Coordinate(F, castleRow)).isEmpty() && board.getPiece(new Coordinate(G, castleRow)).isEmpty();
-            if(rockCond && moveCond && emptyCellCond)
+            if(canCastleShort && rockCond && emptyCellCond)
                 return "";
         }
 

@@ -33,29 +33,26 @@ public class Pawn extends Piece {
         Row fromRow = move.fromRow();
         Row toRow = move.toRow();
 
-        if (color == WHITE){
-            if(fromColumn == toColumn){
-                boolean isValidMove =
-                    (fromRow == TWO && (toRow == THREE || toRow == FOUR)) || (fromRow.v > TWO.v && fromRow.v < EIGHT.v && toRow.v == fromRow.v + 1);
-                boolean noCollision = !isThereACollisionWhileMoving(board, fromColumn, fromRow, toRow);
-                return  isValidMove && noCollision ? "" : "Invalid Pawn move";
-            } else if (areAdjacent(fromColumn, toColumn)) {
-                return toRow.v == fromRow.v + 1 && isEating(board, BLACK, toColumn, toRow) ? "" : "Invalid Pawn move";
-            } else {
-                return "Invalid Pawn move";
-            }
+        Row startPawnRow = color == WHITE ? TWO : SEVEN;
+        Row endPawnRow = color == WHITE ? EIGHT : ONE;
+        Row doubleStepPawnRow = color == WHITE ? FOUR : FIVE;
+        int pawnDirection = color == WHITE ? 1 : -1;
+        boolean isPawnOneStepMoving = toRow.v == fromRow.v + pawnDirection;
+        boolean isPawnMovingBetweenStartAndEnd =
+            color == WHITE
+                ? fromRow.v >= startPawnRow.v && fromRow.v < endPawnRow.v && isPawnOneStepMoving
+                : fromRow.v <= startPawnRow.v && fromRow.v > endPawnRow.v && isPawnOneStepMoving;
+
+        if(fromColumn == toColumn){
+            boolean isValidMove = fromRow == startPawnRow && toRow == doubleStepPawnRow || isPawnMovingBetweenStartAndEnd;
+            boolean noCollision = !isThereACollisionWhileMoving(board, fromColumn, fromRow, toRow);
+            return  isValidMove && noCollision ? "" : "Invalid Pawn move";
+        } else if (areAdjacent(fromColumn, toColumn)) {
+            return isPawnOneStepMoving && isEating(board, nextPlayer(color), toColumn, toRow) ? "" : "Invalid Pawn move";
         } else {
-            if(fromColumn.equals(toColumn)){
-                boolean isValidMove =
-                    (fromRow == SEVEN && (toRow == SIX || toRow == FIVE)) || (fromRow.v < SEVEN.v && fromRow.v > ONE.v && toRow.v == fromRow.v - 1);
-                boolean noCollision = !isThereACollisionWhileMoving(board, fromColumn, fromRow, toRow);
-                return  isValidMove && noCollision ? "" : "Invalid Pawn move";
-            } else if (areAdjacent(fromColumn, toColumn)) {
-                return toRow.v == fromRow.v - 1 && isEating(board, WHITE, toColumn, toRow) ? "" : "Invalid Pawn move";
-            } else {
-                return "Invalid Pawn move";
-            }
+            return "Invalid Pawn move";
         }
+
     }
 
     private boolean isThereACollisionWhileMoving(Board board, Column column, Row fromRow, Row toRow) {
