@@ -31,7 +31,7 @@ public class Game {
             if (piece.getColor() != color)
                 throw new RuntimeException("wrong piece color");
 
-            String error = piece.isLegalMove(board, move);
+            String error = piece.isLegalMove(board, move, true);
             if (!error.isEmpty())
                 throw new RuntimeException(error);
 
@@ -60,7 +60,6 @@ public class Game {
         if (piece instanceof King king) {
             king.setCanCastleLong(false);
             king.setCanCastleShort(false);
-            System.out.println("Color: " + piece.getColor() + " Long: " + king.getCanCastleLong() + " Short: " + king.getCanCastleShort());
         } else if (piece instanceof Rock rock) {
             King king = board.findTheKing(piece.getColor());
             if (king.getCanCastleLong() && rock.getType() == A) {
@@ -69,7 +68,6 @@ public class Game {
             if (king.getCanCastleShort() && rock.getType() == H) {
                 king.setCanCastleShort(false);
             }
-            System.out.println("Color: " + piece.getColor() + " Long: " + king.getCanCastleLong() + " Short: " + king.getCanCastleShort());
         }
     }
 

@@ -35,6 +35,16 @@ public class Board {
         }
     }
 
+    public Board clone() {
+        Board clonedBoard = new Board();
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                clonedBoard.board[y][x] = board[y][x].clone();
+            }
+        }
+        return clonedBoard;
+    }
+
     public Optional<Piece> getPiece(Coordinate coordinate) {
         return board[coordinate.getRow().i][coordinate.getColumn().i].getPiece();
     }
@@ -43,37 +53,23 @@ public class Board {
         board[coordinate.getRow().i][coordinate.getColumn().i].setPiece(piece);
     }
 
-    public boolean isPlayerUnderCheck(Color color) {
-        Cell kingCell = findTheKingCell(color);
-        for (int y=ONE.i; y<=EIGHT.i; y++) {
-            for (int x=A.i; x<=H.i; x++) {
-                if(board[y][x].getPiece().isPresent() && board[y][x].getPiece().get().getColor() != color) {
-                    Cell cell = board[y][x];
-                    Piece piece = board[y][x].getPiece().get();
-                    Move move = new Move(new Coordinate(cell.getColumn(), cell.getRow()), new Coordinate(kingCell.getColumn(), kingCell.getRow()));
-                    if(piece.isLegalMove(this, move).isEmpty())
-                        return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public Cell findTheKingCell(Color color) {
-        for (int y=ONE.i; y<=EIGHT.i; y++) {
-            for (int x=A.i; x<=H.i; x++) {
-                if(board[y][x].getPiece().isPresent()
-                    && board[y][x].getPiece().get() instanceof King
-                    && board[y][x].getPiece().get().getColor() == color
-                ) return board[y][x];
-            }
-        }
-        return null;
+    public boolean isPlayerUnderCheck(Color playerColor) {
+        Cell kingCell = findTheKingCell(playerColor);
+        return isCellSeenByAnyEnemyPieces(nextPlayer(playerColor), new Coordinate(kingCell.getColumn(), kingCell.getRow()));
     }
 
     public King findTheKing(Color color) {
         Cell kingCell = findTheKingCell(color);
         return (King) kingCell.getPiece().orElseThrow(() -> new IllegalStateException(""));
+    }
+
+    public boolean isCellSeenByAnyEnemyPieces(Color color, Coordinate coordinate) {
+        return getAllCellsWithAPiece(color).stream().anyMatch(cell ->
+            cell.getPiece().map(piece -> {
+                Move move = new Move(new Coordinate(cell.getColumn(), cell.getRow()), coordinate);
+                return piece.isLegalMove(this, move, false).isEmpty();
+            }).orElse(false)
+        );
     }
 
     public List<PieceOut> buildResponse() {
@@ -88,6 +84,30 @@ public class Board {
             }
         }
         return pieces;
+    }
+
+    private Cell findTheKingCell(Color color) {
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                if(board[y][x].getPiece().isPresent()
+                    && board[y][x].getPiece().get() instanceof King
+                    && board[y][x].getPiece().get().getColor() == color
+                ) return board[y][x];
+            }
+        }
+        throw new IllegalStateException("No king found");
+    }
+
+    private List<Cell> getAllCellsWithAPiece(Color color) {
+        List<Cell> cells = new ArrayList<>();
+        for (int y=ONE.i; y<=EIGHT.i; y++) {
+            for (int x=A.i; x<=H.i; x++) {
+                if(board[y][x].getPiece().isPresent() && board[y][x].getPiece().get().getColor() == color) {
+                    cells.add(board[y][x]);
+                }
+            }
+        }
+        return cells;
     }
 
     private Optional<Piece> initialPieceFromCoordinate(Row row, Column column) {
@@ -108,13 +128,4 @@ public class Board {
         }
     }
 
-    public Board clone() {
-        Board clonedBoard = new Board();
-        for (int y=ONE.i; y<=EIGHT.i; y++) {
-            for (int x=A.i; x<=H.i; x++) {
-                clonedBoard.board[y][x] = board[y][x].clone();
-            }
-        }
-        return clonedBoard;
-    }
 }

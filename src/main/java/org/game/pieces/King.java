@@ -30,36 +30,6 @@ public class King extends Piece {
         return king;
     }
 
-    @Override
-    public String isLegalMove(Board board, Move move) {
-        Column fromColumn = move.fromColumn();
-        Column toColumn = move.toColumn();
-        Row fromRow = move.fromRow();
-        Row toRow = move.toRow();
-
-        Row castleRow = color == WHITE ? ONE : EIGHT;
-
-        //Player try to castle long
-        if (fromColumn == E && fromRow == castleRow && toColumn == C && toRow == castleRow) {
-            boolean rockCond = board.getPiece(new Coordinate(A, castleRow)).isPresent() && board.getPiece(new Coordinate(A, castleRow)).get() instanceof Rock rock && rock.getType() == A;
-            boolean emptyCellCond = board.getPiece(new Coordinate(B, castleRow)).isEmpty() && board.getPiece(new Coordinate(C, castleRow)).isEmpty() && board.getPiece(new Coordinate(D, castleRow)).isEmpty();
-            if(canCastleLong && rockCond && emptyCellCond)
-                return "";
-        }
-
-        //Player try to castle short
-        if (fromColumn == E && fromRow == castleRow && toColumn == G && toRow == castleRow) {
-            boolean rockCond = board.getPiece(new Coordinate(H, castleRow)).isPresent() && board.getPiece(new Coordinate(H, castleRow)).get() instanceof Rock rock && rock.getType() == H;
-            boolean emptyCellCond = board.getPiece(new Coordinate(F, castleRow)).isEmpty() && board.getPiece(new Coordinate(G, castleRow)).isEmpty();
-            if(canCastleShort && rockCond && emptyCellCond)
-                return "";
-        }
-
-        boolean isQueenMove = queen.isLegalMove(board, move).isEmpty();
-        boolean isSingleStep = Math.abs(fromColumn.i - toColumn.i) <= 1 && Math.abs(fromRow.i - toRow.i) <= 1;
-        return  isQueenMove && isSingleStep ? "" : "Invalid King move";
-    }
-
     public boolean getCanCastleShort() {
         return canCastleShort;
     }
@@ -75,4 +45,70 @@ public class King extends Piece {
     public void setCanCastleLong(boolean canCastleLong) {
         this.canCastleLong = canCastleLong;
     }
+
+    @Override
+    public String isLegalMove(Board board, Move move, boolean checkCastle) {
+        if (checkCastle && isCastlingLong(board, move))
+            return "";
+        if (checkCastle && isCastlingShort(board, move))
+            return "";
+
+        boolean isQueenMove = queen.isLegalMove(board, move, checkCastle).isEmpty();
+        boolean isSingleStep = Math.abs(move.fromColumn().i - move.toColumn().i) <= 1 && Math.abs(move.fromRow().i - move.toRow().i) <= 1;
+        return  isQueenMove && isSingleStep ? "" : "Invalid King move";
+    }
+
+    private boolean isCastlingLong(Board board, Move move) {
+        Column fromColumn = move.fromColumn();
+        Column toColumn = move.toColumn();
+        Row fromRow = move.fromRow();
+        Row toRow = move.toRow();
+
+        Row castleRow = color == WHITE ? ONE : EIGHT;
+        Color enemyColor = nextPlayer(color);
+
+        Coordinate coordA = new Coordinate(A, castleRow);
+        Coordinate coordB = new Coordinate(B, castleRow);
+        Coordinate coordC = new Coordinate(C, castleRow);
+        Coordinate coordD = new Coordinate(D, castleRow);
+        Coordinate coordE = new Coordinate(E, castleRow);
+
+        boolean isLongCastleMove =
+            fromColumn == E && fromRow == castleRow && toColumn == C && toRow == castleRow;
+        boolean rockCond =
+            board.getPiece(coordA).isPresent() && board.getPiece(coordA).get() instanceof Rock rock && rock.getType() == A;
+        boolean emptyCellCond =
+            board.getPiece(coordB).isEmpty() && board.getPiece(coordC).isEmpty() && board.getPiece(coordD).isEmpty();
+        boolean noCheckCond =
+            !board.isCellSeenByAnyEnemyPieces(enemyColor, coordC) && !board.isCellSeenByAnyEnemyPieces(enemyColor, coordD) && !board.isCellSeenByAnyEnemyPieces(enemyColor, coordE);
+
+        return isLongCastleMove && canCastleLong && rockCond && emptyCellCond && noCheckCond;
+    }
+
+    private boolean isCastlingShort(Board board, Move move) {
+        Column fromColumn = move.fromColumn();
+        Column toColumn = move.toColumn();
+        Row fromRow = move.fromRow();
+        Row toRow = move.toRow();
+
+        Row castleRow = color == WHITE ? ONE : EIGHT;
+        Color enemyColor = nextPlayer(color);
+
+        Coordinate coordE = new Coordinate(E, castleRow);
+        Coordinate coordF = new Coordinate(F, castleRow);
+        Coordinate coordG = new Coordinate(G, castleRow);
+        Coordinate coordH = new Coordinate(H, castleRow);
+
+        boolean isShortCastleMove =
+            fromColumn == E && fromRow == castleRow && toColumn == G && toRow == castleRow;
+        boolean rockCond =
+            board.getPiece(coordH).isPresent() && board.getPiece(coordH).get() instanceof Rock rock && rock.getType() == H;
+        boolean emptyCellCond =
+            board.getPiece(coordF).isEmpty() && board.getPiece(coordG).isEmpty();
+        boolean noCheckCond =
+            !board.isCellSeenByAnyEnemyPieces(enemyColor, coordE) && !board.isCellSeenByAnyEnemyPieces(enemyColor, coordF) && !board.isCellSeenByAnyEnemyPieces(enemyColor, coordG);
+
+        return isShortCastleMove && canCastleShort && rockCond && emptyCellCond && noCheckCond;
+    }
+
 }

@@ -21,7 +21,7 @@ public abstract class Piece {
 
     public abstract Piece clone();
 
-    public abstract String isLegalMove(Board board, Move move);
+    public abstract String isLegalMove(Board board, Move move, boolean checkCastle);
 
     protected boolean isSameColorPieceOnACell(Board board, Coordinate coordinate) {
         Optional<Piece> pieceOnDestination = board.getPiece(coordinate);

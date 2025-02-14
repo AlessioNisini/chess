@@ -20,8 +20,8 @@ public class Queen extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Move move) {
-        return rock.isLegalMove(board, move).isEmpty() ||
-            bishop.isLegalMove(board, move).isEmpty() ? "" : "Invalid Queen move";
+    public String isLegalMove(Board board, Move move, boolean checkCastle) {
+        return rock.isLegalMove(board, move, checkCastle).isEmpty() ||
+            bishop.isLegalMove(board, move, checkCastle).isEmpty() ? "" : "Invalid Queen move";
     }
 }

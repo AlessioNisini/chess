@@ -27,7 +27,7 @@ public class Rock extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Move move) {
+    public String isLegalMove(Board board, Move move, boolean checkCastle) {
         Column fromColumn = move.fromColumn();
         Column toColumn = move.toColumn();
         Row fromRow = move.fromRow();

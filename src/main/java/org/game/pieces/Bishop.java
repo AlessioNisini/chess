@@ -21,7 +21,7 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Move move) {
+    public String isLegalMove(Board board, Move move, boolean checkCastle) {
         int indexFromColum = move.fromColumn().i;
         int indexFromRow = move.fromRow().i;
         int indexToColum = move.toColumn().i;
