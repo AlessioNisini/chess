@@ -1,9 +1,8 @@
 package org.game.pieces;
 
 import org.game.Board;
+import org.game.Move;
 import org.game.enums.Color;
-import org.game.enums.Column;
-import org.game.enums.Row;
 
 public class Knight extends Piece {
 
@@ -17,9 +16,14 @@ public class Knight extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        boolean validKnightMove = Math.abs(fromColumn.i - toColumn.i) == 1 && Math.abs(fromRow.i - toRow.i) == 2 ||
-            Math.abs(fromColumn.i - toColumn.i) == 2 && Math.abs(fromRow.i - toRow.i) == 1;
-        return validKnightMove && !isSameColorPieceOnACell(board, toColumn, toRow) ? "" : "Invalid Knight move";
+    public String isLegalMove(Board board, Move move) {
+        int indexFromColum = move.fromColumn().i;
+        int indexFromRow = move.fromRow().i;
+        int indexToColum = move.toColumn().i;
+        int indexToRow = move.toRow().i;
+
+        boolean validKnightMove = Math.abs(indexFromColum - indexToColum) == 1 && Math.abs(indexFromRow - indexToRow) == 2 ||
+            Math.abs(indexFromColum - indexToColum) == 2 && Math.abs(indexFromRow - indexToRow) == 1;
+        return validKnightMove && !isSameColorPieceOnACell(board, move.getTo()) ? "" : "Invalid Knight move";
     }
 }

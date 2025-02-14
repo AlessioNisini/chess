@@ -1,6 +1,8 @@
 package org.game.pieces;
 
 import org.game.Board;
+import org.game.Coordinate;
+import org.game.Move;
 import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
@@ -29,24 +31,30 @@ public class King extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
+    public String isLegalMove(Board board, Move move) {
+        Column fromColumn = move.fromColumn();
+        Column toColumn = move.toColumn();
+        Row fromRow = move.fromRow();
+        Row toRow = move.toRow();
+
         Row castleRow = color == WHITE ? ONE : EIGHT;
+
         if (canCastleLong) {
-            boolean rockCond = board.getPiece(A, castleRow).isPresent() && board.getPiece(A, castleRow).get() instanceof Rock rock && rock.getType() == A;
+            boolean rockCond = board.getPiece(new Coordinate(A, castleRow)).isPresent() && board.getPiece(new Coordinate(A, castleRow)).get() instanceof Rock rock && rock.getType() == A;
             boolean moveCond = fromColumn == E && fromRow == castleRow && toColumn == C && toRow == castleRow;
-            boolean emptyCellCond = board.getPiece(B, castleRow).isEmpty() && board.getPiece(C, castleRow).isEmpty() && board.getPiece(D, castleRow).isEmpty();
+            boolean emptyCellCond = board.getPiece(new Coordinate(B, castleRow)).isEmpty() && board.getPiece(new Coordinate(C, castleRow)).isEmpty() && board.getPiece(new Coordinate(D, castleRow)).isEmpty();
             if(rockCond && moveCond && emptyCellCond)
                 return "";
         }
         if (canCastleShort) {
-            boolean rockCond = board.getPiece(H, castleRow).isPresent() && board.getPiece(H, castleRow).get() instanceof Rock rock && rock.getType() == H;
+            boolean rockCond = board.getPiece(new Coordinate(H, castleRow)).isPresent() && board.getPiece(new Coordinate(H, castleRow)).get() instanceof Rock rock && rock.getType() == H;
             boolean moveCond = fromColumn == E && fromRow == castleRow && toColumn == G && toRow == castleRow;
-            boolean emptyCellCond = board.getPiece(F, castleRow).isEmpty() && board.getPiece(G, castleRow).isEmpty();
+            boolean emptyCellCond = board.getPiece(new Coordinate(F, castleRow)).isEmpty() && board.getPiece(new Coordinate(G, castleRow)).isEmpty();
             if(rockCond && moveCond && emptyCellCond)
                 return "";
         }
 
-        boolean isQueenMove = queen.isLegalMove(board, fromColumn, fromRow, toColumn, toRow).isEmpty();
+        boolean isQueenMove = queen.isLegalMove(board, move).isEmpty();
         boolean isSingleStep = Math.abs(fromColumn.i - toColumn.i) <= 1 && Math.abs(fromRow.i - toRow.i) <= 1;
         return  isQueenMove && isSingleStep ? "" : "Invalid King move";
     }

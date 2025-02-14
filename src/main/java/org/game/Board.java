@@ -35,12 +35,12 @@ public class Board {
         }
     }
 
-    public Optional<Piece> getPiece(Column column, Row row) {
-        return board[row.i][column.i].getPiece();
+    public Optional<Piece> getPiece(Coordinate coordinate) {
+        return board[coordinate.getRow().i][coordinate.getColumn().i].getPiece();
     }
 
-    public void updateBoard(Column column, Row row, Optional<Piece> piece) {
-        board[row.i][column.i].setPiece(piece);
+    public void updateBoard(Coordinate coordinate, Optional<Piece> piece) {
+        board[coordinate.getRow().i][coordinate.getColumn().i].setPiece(piece);
     }
 
     public boolean isPlayerUnderCheck(Color color) {
@@ -50,25 +50,13 @@ public class Board {
                 if(board[y][x].getPiece().isPresent() && board[y][x].getPiece().get().getColor() != color) {
                     Cell cell = board[y][x];
                     Piece piece = board[y][x].getPiece().get();
-                    if(piece.isLegalMove(this, cell.getColumn(), cell.getRow(), kingCell.getColumn(), kingCell.getRow()).isEmpty())
+                    Move move = new Move(new Coordinate(cell.getColumn(), cell.getRow()), new Coordinate(kingCell.getColumn(), kingCell.getRow()));
+                    if(piece.isLegalMove(this, move).isEmpty())
                         return true;
                 }
             }
         }
         return false;
-    }
-
-
-    public void print() {
-        System.out.println();
-        System.out.println("---------------------------------");
-        for (int i = 0; i<8; i++) {
-            for (int j = 0; j < 8; j++) {
-                System.out.print("| " + board[7-i][j] + " ");
-            }
-            System.out.println("|");
-            System.out.println("---------------------------------");
-        }
     }
 
     public Cell findTheKingCell(Color color) {

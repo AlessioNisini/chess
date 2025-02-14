@@ -1,6 +1,8 @@
 package org.game.pieces;
 
 import org.game.Board;
+import org.game.Coordinate;
+import org.game.Move;
 import org.game.enums.Color;
 import org.game.enums.Column;
 import org.game.enums.Row;
@@ -25,7 +27,12 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
+    public String isLegalMove(Board board, Move move) {
+        Column fromColumn = move.fromColumn();
+        Column toColumn = move.toColumn();
+        Row fromRow = move.fromRow();
+        Row toRow = move.toRow();
+
         if (color == WHITE){
             if(fromColumn == toColumn){
                 boolean isValidMove =
@@ -54,14 +61,14 @@ public class Pawn extends Piece {
     private boolean isThereACollisionWhileMoving(Board board, Column column, Row fromRow, Row toRow) {
         List<Row> rows = rowsInTheMiddle(fromRow, toRow);
         for(Row row : rows) {
-            if(board.getPiece(column, row).isPresent())
+            if(board.getPiece(new Coordinate(column, row)).isPresent())
                 return true;
         }
-        return board.getPiece(column, toRow).isPresent();
+        return board.getPiece(new Coordinate(column, toRow)).isPresent();
     }
 
     private boolean isEating(Board board, Color color, Column column, Row row) {
-        Optional<Piece> piece = board.getPiece(column, row);
+        Optional<Piece> piece = board.getPiece(new Coordinate(column, row));
         return piece.isPresent() && piece.get().getColor() == color;
     }
 }

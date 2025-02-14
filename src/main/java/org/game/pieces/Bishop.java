@@ -1,9 +1,8 @@
 package org.game.pieces;
 
 import org.game.Board;
+import org.game.Move;
 import org.game.enums.Color;
-import org.game.enums.Column;
-import org.game.enums.Row;
 
 import static org.game.enums.Column.A;
 import static org.game.enums.Column.H;
@@ -22,28 +21,33 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
-        if(fromColumn.i - fromRow.i == toColumn.i - toRow.i) {
+    public String isLegalMove(Board board, Move move) {
+        int indexFromColum = move.fromColumn().i;
+        int indexFromRow = move.fromRow().i;
+        int indexToColum = move.toColumn().i;
+        int indexToRow = move.toRow().i;
+
+        if(indexFromColum - indexFromRow == indexToColum - indexToRow) {
             for (int y=ONE.i; y<=EIGHT.i; y++) {
                 for (int x=A.i; x<=H.i; x++) {
-                    if(x - y == fromColumn.i - fromRow.i && x > Math.min(fromColumn.i, toColumn.i) && x < Math.max(fromColumn.i, toColumn.i)) {
+                    if(x - y == indexFromColum - indexFromRow && x > Math.min(indexFromColum, indexToColum) && x < Math.max(indexFromColum, indexToColum)) {
                        if(board.board[y][x].getPiece().isPresent())
                            return "Invalid Bishop move";
                     }
                 }
             }
-            return isSameColorPieceOnACell(board, toColumn, toRow) ? "Invalid Bishop move" : "";
+            return isSameColorPieceOnACell(board, move.getTo()) ? "Invalid Bishop move" : "";
         }
-        if(fromColumn.i + fromRow.i == toColumn.i + toRow.i) {
+        if(indexFromColum + indexFromRow == indexToColum + indexToRow) {
             for (int y=ONE.i; y<=EIGHT.i; y++) {
                 for (int x=A.i; x<=H.i; x++) {
-                    if(x + y == fromColumn.i + fromRow.i && x > Math.min(fromColumn.i, toColumn.i) && x < Math.max(fromColumn.i, toColumn.i)) {
+                    if(x + y == indexFromColum + indexFromRow && x > Math.min(indexFromColum, indexToColum) && x < Math.max(indexFromColum, indexToColum)) {
                         if(board.board[y][x].getPiece().isPresent())
                             return "Invalid Bishop move";
                     }
                 }
             }
-            return isSameColorPieceOnACell(board, toColumn, toRow) ? "Invalid Bishop move" : "";
+            return isSameColorPieceOnACell(board, move.getTo()) ? "Invalid Bishop move" : "";
         }
         return "Invalid Bishop move";
     }

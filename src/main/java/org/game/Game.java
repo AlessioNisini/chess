@@ -1,7 +1,6 @@
 package org.game;
 
 import org.game.enums.Color;
-import org.game.enums.Column;
 import org.game.enums.Row;
 import org.game.pieces.King;
 import org.game.pieces.Pawn;
@@ -23,20 +22,20 @@ public class Game {
         this.board = board;
     }
 
-    public String move(Color color, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
+    public String move(Color color, Move move) {
 
         try {
 
-            Piece piece = board.getPiece(fromColumn, fromRow).orElseThrow(() -> new RuntimeException("no piece on the selected cell"));
+            Piece piece = board.getPiece(move.getFrom()).orElseThrow(() -> new RuntimeException("No piece on the selected cell"));
 
             if (piece.getColor() != color)
                 throw new RuntimeException("wrong piece color");
 
-            String error = piece.isLegalMove(board, fromColumn, fromRow, toColumn, toRow);
+            String error = piece.isLegalMove(board, move);
             if (!error.isEmpty())
                 throw new RuntimeException(error);
 
-            makeTheMove(piece, fromColumn, fromRow, toColumn, toRow);
+            makeTheMove(piece, move);
 
             return "";
 
@@ -46,15 +45,15 @@ public class Game {
 
     }
 
-    private void makeTheMove(Piece piece, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
+    private void makeTheMove(Piece piece, Move move) {
         eventuallyUpdateCastleRight(piece);
-        board.updateBoard(fromColumn, fromRow, Optional.empty());
-        if (piece instanceof Pawn && (toRow == ONE || toRow == EIGHT)) {
-            board.updateBoard(toColumn, toRow, Optional.of(new Queen(piece.getColor())));
+        board.updateBoard(move.getFrom(), Optional.empty());
+        if (piece instanceof Pawn && (move.toRow() == ONE || move.toRow() == EIGHT)) {
+            board.updateBoard(move.getTo(), Optional.of(new Queen(piece.getColor())));
         } else {
-            board.updateBoard(toColumn, toRow, Optional.of(piece));
+            board.updateBoard(move.getTo(), Optional.of(piece));
         }
-        moveRockIfCastle(piece, fromColumn, fromRow, toColumn, toRow);
+        moveRockIfCastle(piece, move);
     }
 
     private void eventuallyUpdateCastleRight(Piece piece) {
@@ -74,23 +73,23 @@ public class Game {
         }
     }
 
-    private void moveRockIfCastle(Piece piece, Column fromColumn, Row fromRow, Column toColumn, Row toRow) {
+    private void moveRockIfCastle(Piece piece, Move move) {
         if (piece instanceof King king) {
             Color color = king.getColor();
             Row castleRow = color == WHITE ? ONE : EIGHT;
-            if (fromColumn == E && fromRow == castleRow && toColumn == C && toRow == castleRow) {
+            if (move.fromColumn() == E && move.fromRow() == castleRow && move.toColumn() == C && move.toRow() == castleRow) {
                 king.setCanCastleShort(false);
                 king.setCanCastleLong(false);
-                board.updateBoard(A, castleRow, Optional.empty());
-                board.updateBoard(D, castleRow, Optional.of(new Rock(color, A)));
-                board.updateBoard(toColumn, toRow, Optional.of(piece));
+                board.updateBoard(new Coordinate(A, castleRow), Optional.empty());
+                board.updateBoard(new Coordinate(D, castleRow), Optional.of(new Rock(color, A)));
+                board.updateBoard(move.getTo(), Optional.of(piece));
             }
-            if (fromColumn == E && fromRow == castleRow && toColumn == G && toRow == castleRow) {
+            if (move.fromColumn() == E && move.fromRow() == castleRow && move.toColumn() == G && move.toRow() == castleRow) {
                 king.setCanCastleShort(false);
                 king.setCanCastleLong(false);
-                board.updateBoard(H, castleRow, Optional.empty());
-                board.updateBoard(F, castleRow, Optional.of(new Rock(color, H)));
-                board.updateBoard(toColumn, toRow, Optional.of(piece));
+                board.updateBoard(new Coordinate(H, castleRow), Optional.empty());
+                board.updateBoard(new Coordinate(F, castleRow), Optional.of(new Rock(color, H)));
+                board.updateBoard(move.getTo(), Optional.of(piece));
             }
         }
     }

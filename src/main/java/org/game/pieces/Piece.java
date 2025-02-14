@@ -1,9 +1,9 @@
 package org.game.pieces;
 
 import org.game.Board;
+import org.game.Coordinate;
+import org.game.Move;
 import org.game.enums.Color;
-import org.game.enums.Column;
-import org.game.enums.Row;
 
 import java.util.Optional;
 
@@ -21,10 +21,10 @@ public abstract class Piece {
 
     public abstract Piece clone();
 
-    public abstract String isLegalMove(Board board, Column fromColumn, Row fromRow, Column toColumn, Row toRow);
+    public abstract String isLegalMove(Board board, Move move);
 
-    protected boolean isSameColorPieceOnACell(Board board, Column column, Row row) {
-        Optional<Piece> pieceOnDestination = board.getPiece(column, row);
+    protected boolean isSameColorPieceOnACell(Board board, Coordinate coordinate) {
+        Optional<Piece> pieceOnDestination = board.getPiece(coordinate);
         return pieceOnDestination.isPresent() && pieceOnDestination.get().getColor() == color;
     }
 
